@@ -4,7 +4,7 @@ from __future__ import division
 import numbers
 
 import numpy as np
-from scipy.spatial.ckdtree import cKDTree
+from scipy.spatial import KDTree
 
 
 EPS = np.finfo(np.float32).eps
@@ -61,7 +61,7 @@ class SkNNI:
             self.obs_lats_rad, self.obs_lngs_rad, r)
 
         # Builds a k-dimensional tree using the transformed observations
-        self.kd_tree = cKDTree(np.stack((x, y, z), axis=-1))
+        self.kd_tree = KDTree(np.stack((x, y, z), axis=-1))
 
     def __call__(self, interp_coords, k=20, interp_fn=None):
         """
@@ -115,7 +115,7 @@ class SkNNI:
         kd_tree_query = np.stack((x, y, z), axis=-1)
 
         # Query the spatial index for the indices of the k nearest neighbors.
-        _, knn_indices = self.kd_tree.query(kd_tree_query, k=k, n_jobs=-1)
+        _, knn_indices = self.kd_tree.query(kd_tree_query, k=k, workers=-1)
 
         # Get lat, lng and value information for the k nearest neighbors.
         knn_lats = self.obs_lats_rad[knn_indices]
